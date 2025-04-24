@@ -2,20 +2,13 @@
 -- 1. View the schools and school details tables
 -- 2. In each decade, how many schools were there that produced players?
 -- 3. What are the names of the top 5 schools that produced the most players?
--- 4. For each decade, what were the names of the top 3 schools that produced the most players?
+-- 4. For each decade, what were the names of the top schools that produced the most players?
 
 -- 1. Get to know the data
 SELECT * FROM players LIMIT 10;
 SELECT * FROM salaries LIMIT 10;
 SELECT * FROM school_details LIMIT 10;
 SELECT * FROM schools LIMIT 10;
-
-/* Looking at the school data, I want to answer the following questions:
-	2a. Are there any schools that seem to produce particularly large number of players? (Top 5)
-	2b. What state/country did they attend school? 
-	3. Look at school data from decade granularity. For each decade, how many schools that
-		produced players within that decade.
-	4. What were the top 3 schools that produced the most players for each decade. */
 
 -- 2a. Top 5 schools that produced MLB players
 SELECT sd.name_full AS school_name, s.players_produced
@@ -43,35 +36,25 @@ FROM schools
 GROUP BY decade
 ORDER BY decade;
 
--- 4. What were the top 3 schools that produced the most players for each decade.
+-- 4. What were the top schools that produced the most players for each decade.
 WITH school_by_decade AS (
-	SELECT *, FLOOR(yearid/10) * 10 AS decade
-	FROM schools
-	ORDER BY decade),
-
-	 school_ranking AS (
-	SELECT decade, schoolid, COUNT(DISTINCT playerid) AS num_players,
+	 SELECT *, FLOOR(yearid/10) * 10 AS decade
+	 FROM schools
+	 ORDER BY decade
+),
+school_ranking AS (
+	 SELECT decade, schoolid, COUNT(DISTINCT playerid) AS num_players,
 			ROW_NUMBER() OVER (PARTITION BY decade ORDER BY COUNT(DISTINCT playerid) DESC) AS school_rank
-	FROM school_by_decade
-	GROUP BY decade, schoolid)
+	 FROM school_by_decade
+	 GROUP BY decade, schoolid
+)
 
-SELECT CONCAT(sr.decade, 's') AS decades, 
-		STRING_AGG(CONCAT(sd.name_full, '(', sr.num_players, ')'), ', ' 
-		ORDER BY sr.num_players DESC) AS top_schools
+SELECT CONCAT(sr.decade, 's') AS decade, 
+	   sd.name_full AS school_name, sr.num_players AS num_players
 FROM school_ranking AS sr
-LEFT JOIN school_details AS sd
-ON sr.schoolid = sd.schoolid
-WHERE school_rank <=3
-GROUP BY sr.decade
+LEFT JOIN school_details AS sd ON sr.schoolid = sd.schoolid
+WHERE school_rank =1
 ORDER BY sr.decade DESC;
-
-/*SELECT sr.decade, sr.school_rank, sd.name_full AS school, sr.num_players
-FROM school_ranking AS sr
-LEFT JOIN school_details AS sd
-ON sr.schoolid = sd.schoolid
-WHERE school_rank <=3
-ORDER BY sr.decade DESC, num_players DESC;
-*/
 
 -- PART II: SALARY ANALYSIS
 -- 1. View the salaries table
