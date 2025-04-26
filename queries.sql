@@ -86,22 +86,32 @@ FROM avg_spend_tiles
 WHERE spend_pct = 1;
 
 -- 3. For each team, show the cumulative sum of spending over the years
-SELECT teamid, yearid, 
-		ROUND(SUM(total_spend_yr) OVER 
-		(PARTITION BY teamid ORDER BY yearid) / 1000000, 1) AS cumulative_sum_in_mil
+WITH team_annual AS (
+    SELECT teamid, yearid, SUM(salary) AS total_spend_yr
+    FROM salaries
+    GROUP BY teamid, yearid
+)
+
+SELECT teamid AS team, yearid AS year, 
+       ROUND(SUM(total_spend_yr) OVER 
+             (PARTITION BY teamid ORDER BY yearid) / 1000000, 1) AS cumulative_sum_in_mil
 FROM team_annual
 ORDER BY teamid, yearid;
 
 -- 4. Return the first year that each team's cumulative spending surpassed 1 billion
-WITH team_cumulative AS (
+WITH team_annual AS (
+    SELECT teamid, yearid, SUM(salary) AS total_spend_yr
+    FROM salaries
+    GROUP BY teamid, yearid
+),
+team_cumulative AS (
 	SELECT teamid, yearid, 
 			ROUND(SUM(total_spend_yr) OVER 
 			(PARTITION BY teamid ORDER BY yearid) / 1000000, 1) AS cumulative_sum_in_mil
-	FROM team_annual),
-
-	year_ranking AS (
-	SELECT *,
-			FIRST_VALUE(yearid) OVER (PARTITION BY teamid ORDER BY yearid) AS yr_1_bil
+	FROM team_annual
+),
+year_ranking AS (
+	SELECT *, FIRST_VALUE(yearid) OVER (PARTITION BY teamid ORDER BY yearid) AS yr_1_bil
 	FROM team_cumulative
 	WHERE cumulative_sum_in_mil > 1000
 	ORDER BY teamid, yearid)
