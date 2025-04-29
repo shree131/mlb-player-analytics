@@ -158,20 +158,29 @@ ORDER BY career_length DESC;
 
 -- 3. What team did each player play on for their starting and ending years?
 -- Also accounting for the fact that final_year is not always in salaries table
-CREATE TEMPORARY TABLE IF NOT EXISTS career_team AS (
-	SELECT *,
-			FIRST_VALUE(teamid) OVER (PARTITION BY playerid ORDER BY yearid) AS debut_team,
-			FIRST_VALUE(teamid) OVER (PARTITION BY playerid ORDER BY yearid DESC) AS final_team,
-			ROW_NUMBER() OVER (PARTITION BY playerid ORDER BY yearid ASC) AS row_num
-	FROM (SELECT ci.playerid, ci.namegiven, ci.debut_year, ci.final_year, s.yearid, s.teamid
-		FROM career_info AS ci
-		LEFT JOIN salaries AS s
-		ON ci.playerid = s.playerid 
-		WHERE s.teamid IS NOT NULL)
-	ORDER BY playerid, yearid);
+WITH career_info AS (
+    SELECT playerid, birthyear, birthmonth, birthday, namegiven, debut, finalgame, 
+           EXTRACT(YEAR FROM debut) AS debut_year,
+           EXTRACT(YEAR FROM finalgame) AS final_year
+    FROM players
+),
+career_team AS (
+    SELECT *,
+           FIRST_VALUE(teamid) OVER (PARTITION BY playerid ORDER BY yearid) AS debut_team,
+           FIRST_VALUE(teamid) OVER (PARTITION BY playerid ORDER BY yearid DESC) AS final_team,
+           ROW_NUMBER() OVER (PARTITION BY playerid ORDER BY yearid ASC) AS row_num
+    FROM (
+        SELECT ci.playerid, ci.namegiven, ci.debut_year, ci.final_year, s.yearid, s.teamid
+        FROM career_info AS ci
+        LEFT JOIN salaries AS s
+          ON ci.playerid = s.playerid
+        WHERE s.teamid IS NOT NULL
+    )
+    ORDER BY playerid, yearid
+)
 
 SELECT playerid, namegiven, debut_year, debut_team, final_year, final_team
-	FROM career_team
+FROM career_team
 WHERE row_num = 1;
 
 -- 4. Players that played for a decade or more and ended up in the same team as their debut
@@ -225,14 +234,13 @@ GROUP BY EXTRACT(YEAR FROM AGE(birthdate))
 HAVING COUNT(*) > 1
 ORDER BY age;
 
-/* Maybe more beneficial to look at count of players by age group */
+-- 2b. Group by age group and with atleast 50 players within the age group
 WITH players_info AS (
 SELECT playerid, namegiven, (birthyear || '-' || birthmonth || '-' || birthday)::DATE AS birthdate, 
 		weight, height, bats, throws, debut, finalgame
 FROM players
 WHERE deathyear IS NULL),
 
--- 2b. Group by age group and with atleast 50 players within the age group
 players_by_age_group AS (
 	SELECT *, FLOOR(EXTRACT(YEAR FROM AGE(birthdate)) / 10) * 10 AS age_group
 	FROM players_info
@@ -252,23 +260,29 @@ FROM players AS p
 LEFT JOIN salaries AS s
 ON p.playerid = s.playerid;
 
--- GROUP BY teams and view summary stats for batting preference
+-- GROUP BY teams and view summary stats for batting and throw preferences
 WITH sum_stats AS (
-	SELECT s.teamid,
-			COUNT(DISTINCT CASE WHEN p.bats = 'B' THEN p.playerid ELSE NULL END) AS both,
-			COUNT(DISTINCT CASE WHEN p.bats = 'L' THEN p.playerid ELSE NULL END) AS left,
-			COUNT(DISTINCT CASE WHEN p.bats = 'R' THEN p.playerid ELSE NULL END) AS right,
-			COUNT(DISTINCT p.playerid) * 1.0 AS total
-	FROM players AS p
-	LEFT JOIN salaries AS s
-	ON p.playerid = s.playerid
-	GROUP BY s.teamid)
+    SELECT 
+        s.teamid,
+        COUNT(DISTINCT CASE WHEN p.bats = 'B' THEN p.playerid ELSE NULL END) AS bat_both,
+        COUNT(DISTINCT CASE WHEN p.bats = 'L' THEN p.playerid ELSE NULL END) AS bat_left,
+        COUNT(DISTINCT CASE WHEN p.bats = 'R' THEN p.playerid ELSE NULL END) AS bat_right,
+        COUNT(DISTINCT CASE WHEN p.throws = 'L' THEN p.playerid ELSE NULL END) AS throw_left,
+        COUNT(DISTINCT CASE WHEN p.throws = 'R' THEN p.playerid ELSE NULL END) AS throw_right,
+        COUNT(DISTINCT p.playerid) * 1.0 AS total
+    FROM players AS p
+    LEFT JOIN salaries AS s ON p.playerid = s.playerid
+    WHERE teamid IS NOT NULL
+    GROUP BY s.teamid
+)
 
-SELECT COALESCE(s.teamid, 'N/A') AS team,
-		ROUND(s.both/s.total * 100, 2) || '%' AS both_pct,
-		ROUND(s.left/s.total * 100, 2) || '%' AS left_pct,
-		ROUND(s.right/s.total * 100, 2) || '%' AS right_pct
-FROM sum_stats AS s;
+SELECT COALESCE(teamid, 'N/A') AS team,
+		ROUND(bat_both/total * 100, 2) AS bat_both_pct,
+		ROUND(bat_left/total * 100, 2) AS bat_left_pct,
+		ROUND(bat_right/total * 100, 2) AS bat_right_pct,
+		ROUND(throw_left/total * 100, 2) AS throw_left_pct,
+		ROUND(throw_right/total * 100, 2) throw_right_pct
+FROM sum_stats;
 
 -- 4. How have average height and weight at debut game changed over the years, 
 -- and what's the decade-over-decade difference?
