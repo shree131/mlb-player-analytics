@@ -21,6 +21,14 @@ ON sd.schoolid = s.schoolid
 ORDER BY s.players_produced DESC
 LIMIT 5;
 
+-- 2a. Alt:
+SELECT sd.name_full AS school_name, COUNT(DISTINCT s.playerid) AS players_produced
+FROM schools AS s
+JOIN school_details AS sd ON s.schoolid = sd.schoolid
+GROUP BY sd.name_full
+ORDER BY players_produced DESC
+LIMIT 5;
+
 -- 2b. What states (Top 3) produced the most players?
 SELECT sd.state, COUNT(DISTINCT playerid) AS num_players
 FROM schools AS s
