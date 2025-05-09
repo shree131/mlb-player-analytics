@@ -1,4 +1,4 @@
-# ⚾ The Evolution of Major League Baseball: Told Through Its Players
+<h1 align="center">The Evolution of Major League Baseball: Told Through Its Players</h1>
 
 <h4 align="center" style="margin-top:-10px;">
     A data-driven exploration of player origins, team spending, and career patterns<br>
