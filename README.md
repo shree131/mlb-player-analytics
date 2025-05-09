@@ -72,18 +72,15 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 ##  How to Run
 
 1. Clone the repository:  
-   `git clone https://github.com/yourusername/mlb-player-trends.git`
+   `git clone https://github.com/shree131/mlb-player-analytics-report.git`
 
 2. Navigate into the directory:  
-   `cd mlb-player-trends`
+   `cd mlb-player-analytics-report`
 
-3. Create a virtual environment (optional but recommended):  
-   `python -m venv venv && source venv/bin/activate`
-
-4. Install dependencies:  
+3. Install dependencies:  
    `pip install -r requirements.txt`
 
-5. Launch Jupyter Notebook:  
+4. Launch Jupyter Notebook:  
    `jupyter notebook`
 
 *Note: This project uses a .env file to store database credentials. Please create your own .env file based on the structure in the notebook.*
