@@ -1,0 +1,17 @@
+# Core Libraries
+pandas
+numpy
+matplotlib
+seaborn
+
+# Styling & Fonts
+pyfonts
+highlight-text
+
+# Environment & Database
+python-dotenv
+sqlalchemy
+
+# Jupyter Notebook Display
+ipython
+
