@@ -46,24 +46,24 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 
 ## Key Insights
 
-### 🎓 **School Origins**
+### 1. **School Origins**
 - **California** dominates with 1,247 MLB players — more than Texas and Florida combined.
 - **UT Austin, USC, and ASU** are top talent pipelines with decades of player output.
 - **Shift over time**: From Ivy League in early years to Southern and Western schools in modern decades.
 - Post-1990s, **fewer schools feed more players**, suggesting recruitment has become more centralized.
 
-### 🏟️ **Team Behavior & Spending**
+### 2. **Team Behavior & Spending**
 - **San Francisco Giants**, **Yankees**, and **Angels** top the lifetime spending chart.
 - **2007 saw 6 teams exceed $1B** in total spend—the peak of modern team investment.
 - **Retention varies sharply**: Some teams retain over 50% of players; others retain just 5%.
 - Spending patterns reveal how teams build competitive strategies differently.
 
-### 💼 **Player Career Patterns**
+### 3. **Player Career Patterns**
 - **Average career lasts ~3 years**; most players retire by age 29.
 - **75% of players play 8 years or less**; nearly 7,000 last just a single season.
 - Only **23% of long-term players** stay with their debut team.
 
-### 📈 **Physical Evolution**
+### 4. **Physical Evolution**
 - **Player height** has increased slowly (avg. 0.35 in/decade).
 - **Player weight** increased more rapidly—from 163 lbs in the 1870s to 207 lbs in the 2010s.
 - **Batting & throwing styles** remain stable: ~79% of players throw right-handed.
