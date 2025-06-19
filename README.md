@@ -98,4 +98,4 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 Beneath the stats lies a dynamic story of how geography, economics, and strategy have shaped the modern MLB. It's a story told through **data**, **trends**, and **generational shifts** in the league's ecosystem.
 
 ---
-*© 2025 All rights are reserved.*
+*© 2024 All rights are reserved.*
