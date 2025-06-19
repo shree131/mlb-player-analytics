@@ -77,13 +77,13 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 
 <img src='Visuals/player_atttributes_comparison.png' alt='Player Attributes Comparison' width='65%'>
 
-##  How to Run
+##  How to Run and View Project Locally
 
 1. Clone the repository:  
-   `git clone https://github.com/shree131/mlb-player-analytics-report.git`
+   `git clone https://github.com/shree131/mlb-player-analytics.git`
 
 2. Navigate into the directory:  
-   `cd mlb-player-analytics-report`
+   `cd mlb-player-analytics`
 
 3. Install dependencies:  
    `pip install -r requirements.txt`
@@ -98,3 +98,4 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 Beneath the stats lies a dynamic story of how geography, economics, and strategy have shaped the modern MLB. It's a story told through **data**, **trends**, and **generational shifts** in the league's ecosystem.
 
 ---
+*© 2025 All rights are reserved.*
