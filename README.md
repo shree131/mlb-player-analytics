@@ -25,7 +25,7 @@ Explore 150+ years of Major League Baseball through the lens of player origins, 
 - **Jupyter Notebooks** for analysis and storytelling
 - **PostgreSQL** (for original queries and joins)
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 ├── Data/
